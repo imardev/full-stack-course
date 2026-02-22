@@ -17,16 +17,15 @@ const App = () => {
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
 
-  const HandleVote = () => {
+  function HandleVote() {
     const votesCopy = [...votes];
     votesCopy[selected] += 1;
     setVotes(votesCopy);
-  };
+  }
 
   return (
     <div>
-      {anecdotes[selected]}
-      <br />
+      <p>{anecdotes[selected]}</p>
       <p>has {votes[selected]} votes</p>
       <div>
         <Button
@@ -36,6 +35,9 @@ const App = () => {
         />
         <Button text="Vote" funct={HandleVote} value={votes} />
       </div>
+      <h2>Anecdote with most votes</h2>
+      <p>{anecdotes[votes.indexOf(Math.max(...votes))]}</p>
+      <span>Has {Math.max(...votes)} votes</span>
     </div>
   );
 };
