@@ -23,7 +23,15 @@ const App = () => {
     ],
   };
 
-  return <Course course={course} />;
+  const total = course.parts.reduce((sum, part) => sum + part.exercises, 0);
+  return (
+    <>
+      <Course course={course} />
+      <p>
+        <strong>Total of {total} exercises</strong>
+      </p>
+    </>
+  );
 };
 
 export default App;
