@@ -1,4 +1,7 @@
 import { useState } from "react";
+import Filter from "./components/Filter";
+import Form from "./components/PersonForm";
+import Persons from "./components/Persons";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -18,7 +21,6 @@ const App = () => {
       number: newNumber,
       id: Math.max(...persons.map((p) => p.id)) + 1,
     };
-
     if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
       return;
@@ -32,40 +34,20 @@ const App = () => {
       <h2>Phonebook</h2>
       <div>
         filter shown with:{" "}
-        <input
+        <Filter
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
         />
       </div>
-      <form onSubmit={addPerson}>
-        <div>
-          name:{" "}
-          <input
-            value={newName}
-            onChange={(event) => setNewName(event.target.value)}
-          />
-          <div>
-            number:{" "}
-            <input
-              value={newNumber}
-              onChange={(event) => setNewNumber(event.target.value)}
-            />
-          </div>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Form
+        onSubmit={addPerson}
+        newName={newName}
+        setNewName={setNewName}
+        newNumber={newNumber}
+        setNewNumber={setNewNumber}
+      />
       <h2>Numbers</h2>
-      {persons
-        .filter((person) =>
-          person.name.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
-        .map((person) => (
-          <p key={person.name}>
-            {person.name} {person.number}
-          </p>
-        ))}
+      <Persons persons={persons} searchTerm={searchTerm} />
     </div>
   );
 };
