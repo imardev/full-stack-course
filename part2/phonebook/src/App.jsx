@@ -1,23 +1,23 @@
-import { useState, UseEffect } from "react";
+import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import Form from "./components/PersonForm";
 import Persons from "./components/Persons";
 import axios from "axios";
 
 const App = () => {
-  UseEffect(() => {
+  const [persons, setPersons] = useState([]);
+  const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  useEffect(() => {
     axios
       .get(
-        "https://my-json-server.typicode.com/imardev/full-stack-course/notes",
+        "https://my-json-server.typicode.com/imardev/full-stack-course/persons",
       )
       .then((response) => {
         setPersons(response.data);
       });
   }, []);
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
 
   const addPerson = (event) => {
     event.preventDefault();
