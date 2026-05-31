@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import Form from "./components/PersonForm";
 import Persons from "./components/Persons";
-import axios from "axios";
+import PersonService from "./services/Services";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,12 +10,12 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
-    axios
-      .get(
-        "https://my-json-server.typicode.com/imardev/full-stack-course/persons",
-      )
-      .then((response) => {
-        setPersons(response.data);
+    PersonService.getAll()
+      .then((initialPersons) => {
+        setPersons(initialPersons);
+      })
+      .catch((e) => {
+        console.error("Error fetching data:", e);
       });
   }, []);
 
@@ -33,6 +33,14 @@ const App = () => {
     setPersons(persons.concat(personObject));
     setNewName("");
     setNewNumber("");
+
+    PersonService.create(personObject)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+      })
+      .catch((e) => {
+        console.error("Error adding person:", e);
+      });
   };
   return (
     <div>
