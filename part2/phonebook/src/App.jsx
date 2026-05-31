@@ -9,6 +9,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Obtener los contactos del backend al cargar el componente
   useEffect(() => {
     PersonService.getAll()
       .then((initialPersons) => {
@@ -19,13 +21,16 @@ const App = () => {
       });
   }, []);
 
+  // Función para agregar un nuevo contacto
   const addPerson = (event) => {
     event.preventDefault();
+    // Objeto del nuevo contacto
     const personObject = {
       name: newName,
       number: newNumber,
-      id: Math.max(...persons.map((p) => p.id)) + 1,
     };
+
+    // Verificar si el nombre ya existe en la lista de contactos
     if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
       return;
@@ -34,6 +39,7 @@ const App = () => {
     setNewName("");
     setNewNumber("");
 
+    // Agregar el nuevo contacto al backend
     PersonService.create(personObject)
       .then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
@@ -42,6 +48,24 @@ const App = () => {
         console.error("Error adding person:", e);
       });
   };
+
+  // Función para eliminar contacto con boton
+  const handleDelete = (id) => {
+    if (
+      window.confirm(
+        `Delete ${persons.find((person) => person.id === id)?.name}?`,
+      )
+    ) {
+      PersonService.deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id));
+        })
+        .catch((e) => {
+          console.error("Error deleting person:", e);
+        });
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -60,7 +84,11 @@ const App = () => {
         setNewNumber={setNewNumber}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} searchTerm={searchTerm} />
+      <Persons
+        persons={persons}
+        searchTerm={searchTerm}
+        onDelete={handleDelete}
+      />
     </div>
   );
 };
