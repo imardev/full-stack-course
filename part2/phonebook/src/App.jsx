@@ -24,25 +24,44 @@ const App = () => {
   // Función para agregar un nuevo contacto
   const addPerson = (event) => {
     event.preventDefault();
-    // Objeto del nuevo contacto
+
     const personObject = {
       name: newName,
       number: newNumber,
     };
 
-    // Verificar si el nombre ya existe en la lista de contactos
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+    const existingPerson = persons.find((person) => person.name === newName);
+
+    if (existingPerson) {
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`,
+        )
+      ) {
+        PersonService.updateNumber(existingPerson.id, personObject)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== returnedPerson.id ? person : returnedPerson,
+              ),
+            );
+
+            setNewName("");
+            setNewNumber("");
+          })
+          .catch((e) => {
+            console.error("Error Updating number", e);
+          });
+      }
+
       return;
     }
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
 
-    // Agregar el nuevo contacto al backend
     PersonService.create(personObject)
       .then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
       })
       .catch((e) => {
         console.error("Error adding person:", e);
