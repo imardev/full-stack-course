@@ -30,6 +30,22 @@ app.get("/api/persons", (request, response) => {
   response.json(persons);
 });
 
+app.get("/api/persons/:id", (request, response) => {
+  const id_param = request.params;
+  const id = Number(id_param.id);
+  let personaEncontrada = false;
+  persons.forEach((person) => {
+    if (person.id === id) {
+      response.json(person);
+      personaEncontrada = true;
+    }
+  });
+
+  if (personaEncontrada === false) {
+    response.sendStatus(404);
+  }3.3
+});
+
 app.get("/info", (request, response) => {
   const fecha = new Date();
   const total = persons.length;
