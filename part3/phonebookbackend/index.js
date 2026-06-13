@@ -46,6 +46,12 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
+app.delete("/api/persons/:id", (request, response) => {
+  const id_param = request.params;
+  const id = Number(id_param.id);
+  persons = persons.filter((person) => person.id !== id);
+});
+
 app.get("/info", (request, response) => {
   const fecha = new Date();
   const total = persons.length;
