@@ -34,8 +34,8 @@ app.get("/info", (request, response) => {
   const fecha = new Date();
   const total = persons.length;
   response.send(`
-    <h2>PhoneBook has info for ${total} persons</h2>
-    <h3>${fecha}<h3>
+    <p>PhoneBook has info for ${total} persons</p>
+    <p>${fecha}<p>
     `);
 });
 
