@@ -43,7 +43,7 @@ app.get("/api/persons/:id", (request, response) => {
 
   if (personaEncontrada === false) {
     response.sendStatus(404);
-  }3.3
+  }
 });
 
 app.get("/info", (request, response) => {
