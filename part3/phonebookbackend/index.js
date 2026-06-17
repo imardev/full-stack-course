@@ -2,6 +2,7 @@ const express = require("express");
 
 const app = express();
 const PORT = 3001;
+app.use(express.json());
 
 let persons = [
   {
@@ -59,6 +60,19 @@ app.get("/info", (request, response) => {
     <p>PhoneBook has info for ${total} persons</p>
     <p>${fecha}<p>
     `);
+});
+
+app.post("/api/persons", (request, response) => {
+  let datos = request.body;
+  let id = Math.random();
+  id = id * 1000000000;
+  id = Math.round(id);
+  const newPerson = {
+    id: id,
+    name: datos.name,
+    number: datos.number,
+  };
+  persons.push(newPerson);
 });
 
 app.listen(PORT, () => {
