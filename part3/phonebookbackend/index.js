@@ -62,17 +62,51 @@ app.get("/info", (request, response) => {
     `);
 });
 
+// Endpoint para añadir datos con validación de datos vacios o duplicados
 app.post("/api/persons", (request, response) => {
+  // Obtener datos de la petición
   let datos = request.body;
+
+  // Generar id aleatorio
   let id = Math.random();
   id = id * 1000000000;
   id = Math.round(id);
+
+  // Declarar una variable para los elementos duplicados
+  let duplicated = false;
+
+  // Declarar una variable para los elementos vacios
+  let vacio = false;
+
+  // Declaramos el objeto de la persona para identificar los datos que se añadiran posteriormente
   const newPerson = {
     id: id,
     name: datos.name,
     number: datos.number,
   };
-  persons.push(newPerson);
+
+  // Creamos una variable para la condicion basada en lso datos originales pasandola a texto
+  let dataNumber = String(newPerson.number);
+
+  // condicional de verificacion que tenga contenido
+  if (newPerson.name.trim() === "" || dataNumber.trim() === "") {
+    console.error("Both name and phone number are required.");
+    vacio = true;
+  }
+
+  // Recorre la lista de persona y si encuentra una con el mismo nombre de la petición devuelve un error y el true en la variable correspoendiente
+  persons.forEach((persona) => {
+    if (persona.name === newPerson.name) {
+      console.error("name must be unique");
+      duplicated = true;
+    }
+  });
+
+  // Si no es duplicad y no esta vacio añade la persona
+  if (!duplicated === true && !vacio === true) {
+    console.log("Contact added successfully.");
+    persons.push(newPerson);
+  }
 });
 
 app.listen(PORT, () => {
