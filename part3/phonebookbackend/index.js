@@ -4,10 +4,13 @@ const cors = require("cors");
 
 const app = express();
 const PORT = 3001;
-const frontend = "http://localhost:5173";
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://full-stack-course-wfst.onrender.com",
+];
 app.use(
   cors({
-    origin: frontend,
+    origin: allowedOrigins,
   }),
 );
 app.use(express.json());
