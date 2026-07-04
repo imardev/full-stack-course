@@ -1,8 +1,15 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 
 const app = express();
 const PORT = 3001;
+const frontend = "http://localhost:5173";
+app.use(
+  cors({
+    origin: frontend,
+  }),
+);
 app.use(express.json());
 
 morgan.token("body", (req) => {

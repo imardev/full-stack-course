@@ -2,7 +2,7 @@ import axios from "axios";
 
 // URL base para el backend
 const baseUrl =
-  "http://localhost:3001/persons"; /* Change this to your actual backend URL */
+  "http://localhost:3001/api/persons"; /* Change this to your actual backend URL */
 
 // Funciones para interactuar con el backend
 // Obtener todos los contactos
