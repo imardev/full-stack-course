@@ -1,8 +1,7 @@
 import axios from "axios";
 
 // URL base para el backend
-const baseUrl =
-  import.meta.env.VITE_API_URL || "http://localhost:3001/api/persons";
+const baseUrl = import.meta.env.VITE_API_URL ?? "/api/persons";
 
 // Funciones para interactuar con el backend
 // Obtener todos los contactos
