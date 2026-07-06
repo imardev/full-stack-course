@@ -1,9 +1,12 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+require("dotenv").config();
+const mongoose = require("mongoose");
+const Person = require("./modules/persons");
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT;
 const allowedOrigins = [
   "http://localhost:5173",
   "https://full-stack-course-wfst.onrender.com",
@@ -24,31 +27,17 @@ app.use(
 );
 app.use(express.static("dist"));
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
+// const password = process.env.PASSWORD;
+
+// const person = new Person({
+//   name: name,
+//   number: number,
+// });
 
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((persons) => {
+    response.json(persons);
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
