@@ -89,7 +89,7 @@ const App = () => {
       .catch((e) => {
         console.error(e);
         setMessageStatus("error");
-        setErrorMessage(`Error adding person`);
+        setErrorMessage(`Error adding person: ${e.response.data.error}`);
         setTimeout(() => {
           setErrorMessage(null);
         }, 5000);
@@ -145,7 +145,7 @@ const App = () => {
       />
       <h2>Numbers</h2>
       <Persons
-        persons={persons}
+        allPersons={persons}
         searchTerm={searchTerm}
         onDelete={handleDelete}
       />
