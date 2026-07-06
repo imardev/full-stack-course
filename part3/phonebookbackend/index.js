@@ -27,13 +27,6 @@ app.use(
 );
 app.use(express.static("dist"));
 
-// const password = process.env.PASSWORD;
-
-// const person = new Person({
-//   name: name,
-//   number: number,
-// });
-
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((persons) => {
     response.json(persons);
@@ -75,48 +68,20 @@ app.get("/info", (request, response) => {
 app.post("/api/persons", (request, response) => {
   // Obtener datos de la petición
   let datos = request.body;
+  const { name, number } = datos;
 
-  // Generar id aleatorio
-  let id = Math.random();
-  id = id * 1000000000;
-  id = Math.round(id);
-
-  // Declarar una variable para los elementos duplicados
-  let duplicated = false;
-
-  // Declarar una variable para los elementos vacios
-  let vacio = false;
-
-  // Declaramos el objeto de la persona para identificar los datos que se añadiran posteriormente
-  const newPerson = {
-    id: id,
-    name: datos.name,
-    number: datos.number,
-  };
-
-  // Creamos una variable para la condicion basada en lso datos originales pasandola a texto
-  let dataNumber = String(newPerson.number);
-
-  // condicional de verificacion que tenga contenido
-  if (newPerson.name.trim() === "" || dataNumber.trim() === "") {
-    console.error("Both name and phone number are required.");
-    vacio = true;
+  if (!name && !number) {
+    return response.status(400).json({ error: "Content missing" });
   }
 
-  // Recorre la lista de persona y si encuentra una con el mismo nombre de la petición devuelve un error y el true en la variable correspoendiente
-  persons.forEach((persona) => {
-    if (persona.name === newPerson.name) {
-      console.error("name must be unique");
-      duplicated = true;
-    }
+  const newPerson = new Person({
+    name: name,
+    number: number,
   });
-
-  // Si no es duplicad y no esta vacio añade la persona
-  if (!duplicated === true && !vacio === true) {
-    console.log("Contact added successfully.");
-    persons.push(newPerson);
-  }
-  response.status(201).json(newPerson);
+  // Declaramos el objeto de la persona para identificar los datos que se añadiran posteriormente
+  newPerson.save().then((savedPerson) => {
+    response.json(savedPerson);
+  });
 });
 
 app.listen(PORT, () => {
