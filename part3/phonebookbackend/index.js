@@ -78,11 +78,14 @@ app.delete("/api/persons/:id", (request, response, next) => {
 
 app.get("/info", (request, response) => {
   const fecha = new Date();
-  const total = persons.length;
-  response.send(`
-    <p>PhoneBook has info for ${total} persons</p>
-    <p>${fecha}<p>
+  let total;
+  Person.find({}).then((persons) => {
+    response.send(`
+    <p>PhoneBook has info for ${persons.length} persons</p>
+    <p>${fecha}</p>
     `);
+  });
+  console.log(total);
 });
 
 // Endpoint para añadir datos con validación de datos vacios o duplicados
