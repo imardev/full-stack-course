@@ -11,6 +11,28 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://full-stack-course-wfst.onrender.com",
 ];
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+// controlador de solicitudes con endpoint desconocido
+// app.use(unknownEndpoint);
+
+// Utilizar frontend
+app.use(express.static("dist"));
+
+// Politicas de acceso al backend
 app.use(
   cors({
     origin: allowedOrigins,
@@ -25,7 +47,6 @@ morgan.token("body", (req) => {
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body"),
 );
-app.use(express.static("dist"));
 
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((persons) => {
@@ -33,26 +54,24 @@ app.get("/api/persons", (request, response) => {
   });
 });
 
-app.get("/api/persons/:id", (request, response) => {
-  const id_param = request.params;
-  const id = Number(id_param.id);
-  let personaEncontrada = false;
-  persons.forEach((person) => {
-    if (person.id === id) {
-      response.json(person);
-      personaEncontrada = true;
-    }
-  });
-
-  if (personaEncontrada === false) {
-    response.sendStatus(404);
-  }
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (request, response) => {
-  const id_param = request.params;
-  const id = Number(id_param.id);
-  persons = persons.filter((person) => person.id !== id);
+  Person.findByIdAndDelete(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/info", (request, response) => {
@@ -83,6 +102,7 @@ app.post("/api/persons", (request, response) => {
     response.json(savedPerson);
   });
 });
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Servidor escuhando en el puerto ${PORT}`);
