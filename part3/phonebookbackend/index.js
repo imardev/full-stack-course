@@ -2,7 +2,6 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
-const mongoose = require("mongoose");
 const Person = require("./modules/persons");
 
 const app = express();
@@ -24,9 +23,9 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 };
 
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: "unknown endpoint" });
-};
+// const unknownEndpoint = (request, response) => {
+//   response.status(404).send({ error: "unknown endpoint" });
+// };
 
 // controlador de solicitudes con endpoint desconocido
 // app.use(unknownEndpoint);
@@ -72,7 +71,7 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));
@@ -80,14 +79,12 @@ app.delete("/api/persons/:id", (request, response, next) => {
 
 app.get("/info", (request, response) => {
   const fecha = new Date();
-  let total;
   Person.find({}).then((persons) => {
     response.send(`
     <p>PhoneBook has info for ${persons.length} persons</p>
     <p>${fecha}</p>
     `);
   });
-  console.log(total);
 });
 
 // Endpoint para añadir datos con validación de datos vacios o duplicados
@@ -115,10 +112,6 @@ app.post("/api/persons", (request, response, next) => {
 
 app.put("/api/persons/:id", (request, response, next) => {
   const { name, number } = request.body;
-  const person = {
-    name: name,
-    number: number,
-  };
 
   Person.findByIdAndUpdate(
     request.params.id,

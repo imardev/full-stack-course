@@ -41,7 +41,7 @@ if (process.argv.length === 4) {
     mongoose.connection.close();
   });
 } else {
-  contact.save().then((result) => {
+  contact.save().then(() => {
     console.log(`${name} saved!`);
     mongoose.connection.close();
   });
