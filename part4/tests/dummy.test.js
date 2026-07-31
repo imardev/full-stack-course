@@ -110,3 +110,11 @@ test("returns the author with the most blogs", () => {
     blogs: 2,
   });
 });
+
+test("returns the author with the most likes", () => {
+  const result = listHelper.mostLikes(helper.initialBlogs);
+  assert.deepStrictEqual(result, {
+    author: "Edsger W. Dijkstra",
+    likes: 17,
+  });
+});
