@@ -4,14 +4,6 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
-const getTokenFrom = (request) => {
-  const authorization = request.get("authorization");
-  if (authorization && authorization.startsWith("Bearer ")) {
-    return authorization.replace("Bearer ", "");
-  }
-  return null;
-};
-
 blogRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", {
     username: 1,
@@ -24,7 +16,7 @@ blogRouter.post("/", async (request, response, next) => {
   const { title, author, url, likes } = request.body;
 
   try {
-    const token = getTokenFrom(request);
+    const token = request.token;
 
     if (!token) {
       return response.status(401).json({ error: "token missing" });
