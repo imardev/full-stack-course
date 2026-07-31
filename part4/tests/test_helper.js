@@ -28,7 +28,28 @@ const newBlog = {
   likes: 2,
 };
 
+const newBlogWithoutLikes = {
+  title: "TDD harms architecture",
+  author: "Robert C. Martin",
+  url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+};
+
+const blogWithoutTitle = {
+  author: "Michael Chan",
+  url: "https://reactpatterns.com/",
+  likes: 7,
+};
+
+const blogWithoutUrl = {
+  title: "React patterns",
+  author: "Michael Chan",
+  likes: 7,
+};
+
 module.exports = {
   initialBlogs,
   newBlog,
+  newBlogWithoutLikes,
+  blogWithoutTitle,
+  blogWithoutUrl,
 };

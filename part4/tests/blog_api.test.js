@@ -9,7 +9,6 @@ const Blog = require("../models/blog");
 const api = supertest(app);
 
 beforeEach(async () => {
-  console.log("beforeEach");
   await Blog.deleteMany({});
   await Blog.insertMany(helper.initialBlogs);
 });
@@ -43,4 +42,21 @@ test("should add one blog that has the right content", async () => {
     .expect("Content-Type", /application\/json/);
   const actualContent = await api.get("/api/blogs");
   assert.strictEqual(actualContent.body.length, initialContent + 1);
+});
+
+test("should add a blog with zero likes if the likes property is missing", async () => {
+  const response = await api
+    .post("/api/blogs")
+    .send(helper.newBlogWithoutLikes)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+  assert.strictEqual(response.body.likes, 0);
+});
+
+test("fails with status code 400 if title is missing", async () => {
+  await api.post("/api/blogs").send(helper.blogWithoutTitle).expect(400);
+});
+
+test("fails with status code 400 if url is missing", async () => {
+  await api.post("/api/blogs").send(helper.blogWithoutUrl).expect(400);
 });
