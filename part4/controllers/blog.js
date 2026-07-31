@@ -1,15 +1,18 @@
 const blogRouter = require("express").Router();
 const { response } = require("express");
 const Blog = require("../models/blog");
+const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 
-blogRouter.get("/", (request, response) => {
-  Blog.find({}).then((blogs) => {
-    response.json(blogs);
-  });
+blogRouter.get("/", async (request, response) => {
+  const blogs = await Blog.find({}).populate("user");
+  response.json(blogs);
 });
 
 blogRouter.post("/", async (request, response, next) => {
-  const { title, author, url, likes } = request.body;
+  const { title, author, url, likes, userId } = request.body;
+
+  const user = await User.findById(userId);
 
   if (!title || !url) {
     return response.status(400).json({ error: "title or url is missing" });
@@ -20,10 +23,13 @@ blogRouter.post("/", async (request, response, next) => {
     author,
     url,
     likes: likes ?? 0,
+    user: user.id,
   });
 
   try {
     const savedBlog = await blog.save();
+    user.blogs = user.blogs.concat(savedBlog._id);
+    await user.save();
     response.status(201).json(savedBlog);
   } catch (exception) {
     next(exception);
