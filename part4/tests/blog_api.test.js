@@ -6,12 +6,14 @@ const app = require("../app");
 const assert = require("node:assert/strict");
 const helper = require("./test_helper");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 const api = supertest(app);
 
 beforeEach(async () => {
   await Blog.deleteMany({});
   await Blog.insertMany(helper.initialBlogs);
+  await User.deleteMany({});
 });
 
 test("blogs are returned as json", async () => {
@@ -35,19 +37,34 @@ test("return blogs with right unique identifier property", async () => {
 });
 
 test("should add one blog that has the right content", async () => {
-  const initialContent = helper.initialBlogs.length;
-  await api
+  const blogsAtStart = (await helper.blogsInDb()).length;
+  await api.post("/api/users").send({
+    username: "loginUser",
+    name: "Login User",
+    password: "secret",
+  });
+  const loggedUser = await api.post("/api/login").send(helper.loginUser);
+  const response = await api
     .post("/api/blogs")
+    .set("Authorization", `Bearer ${loggedUser.body.token}`)
     .send(helper.newBlog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
-  const actualContent = await api.get("/api/blogs");
-  assert.strictEqual(actualContent.body.length, initialContent + 1);
+  const newBlog = response.body;
+  const blogsAtFinal = await helper.blogsInDb();
+  assert.strictEqual(blogsAtFinal.length, blogsAtStart + 1);
 });
 
 test("should add a blog with zero likes if the likes property is missing", async () => {
+  await api.post("/api/users").send({
+    username: "loginUser",
+    name: "Login User",
+    password: "secret",
+  });
+  const loggedUser = await api.post("/api/login").send(helper.loginUser);
   const response = await api
     .post("/api/blogs")
+    .set("Authorization", `Bearer ${loggedUser.body.token}`)
     .send(helper.newBlogWithoutLikes)
     .expect(201)
     .expect("Content-Type", /application\/json/);
@@ -55,9 +72,29 @@ test("should add a blog with zero likes if the likes property is missing", async
 });
 
 test("fails with status code 400 if title is missing", async () => {
-  await api.post("/api/blogs").send(helper.blogWithoutTitle).expect(400);
+  await api.post("/api/users").send({
+    username: "loginUser",
+    name: "Login User",
+    password: "secret",
+  });
+  const loggedUser = await api.post("/api/login").send(helper.loginUser);
+  await api
+    .post("/api/blogs")
+    .set("Authorization", `Bearer ${loggedUser.body.token}`)
+    .send(helper.blogWithoutTitle)
+    .expect(400);
 });
 
 test("fails with status code 400 if url is missing", async () => {
-  await api.post("/api/blogs").send(helper.blogWithoutUrl).expect(400);
+  await api.post("/api/users").send({
+    username: "loginUser",
+    name: "Login User",
+    password: "secret",
+  });
+  const loggedUser = await api.post("/api/login").send(helper.loginUser);
+  await api
+    .post("/api/blogs")
+    .set("Authorization", `Bearer ${loggedUser.body.token}`)
+    .send(helper.blogWithoutUrl)
+    .expect(400);
 });
