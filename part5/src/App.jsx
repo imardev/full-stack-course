@@ -138,10 +138,15 @@ const App = () => {
     }
   };
 
-  const blogsRender = () =>
-    blogs.map((blog) => (
+  const blogsRender = () => {
+    const orderedBlogs = [...blogs];
+
+    orderedBlogs.sort((a, b) => b.likes - a.likes);
+
+    return orderedBlogs.map((blog) => (
       <Blog key={blog.id} handleLikeBlog={handleLikeBlog} blog={blog} />
     ));
+  };
 
   return (
     <div>
