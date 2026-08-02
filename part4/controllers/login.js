@@ -25,6 +25,7 @@ loginRouter.post("/", async (request, response) => {
     expiresIn: "7d",
   });
 
+
   response
     .status(200)
     .send({ token, username: user.username, name: user.name });
