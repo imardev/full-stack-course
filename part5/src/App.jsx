@@ -71,6 +71,40 @@ const App = () => {
     }
   };
 
+  const handleLikeBlog = async (blog) => {
+    const updatedBlog = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1,
+      user: blog.user.id,
+    };
+
+    try {
+      const returnedBlog = await blogService.update(blog.id, updatedBlog);
+      setBlogs(
+        blogs.map((likeBlog) => {
+          if (likeBlog.id === blog.id) {
+            return returnedBlog;
+          }
+
+          return likeBlog;
+        }),
+      );
+      setStatus("success");
+      setNotificationMessage(`Blog ${blog.title} liked successfully`);
+      setTimeout(() => {
+        setStatus(null);
+        setNotificationMessage(null);
+      }, 5000);
+    } catch {
+      setNotificationMessage("Failed to update blog");
+      setTimeout(() => {
+        setNotificationMessage(null);
+      }, 5000);
+    }
+  };
+
   const handleNewBlog = async ({ title, author, url }) => {
     const blogObject = {
       title,
@@ -105,7 +139,9 @@ const App = () => {
   };
 
   const blogsRender = () =>
-    blogs.map((blog) => <Blog key={blog.id} blog={blog} />);
+    blogs.map((blog) => (
+      <Blog key={blog.id} handleLikeBlog={handleLikeBlog} blog={blog} />
+    ));
 
   return (
     <div>
