@@ -56,7 +56,7 @@ const App = () => {
       setUser(null);
       blogService.setToken(null);
       setStatus("success");
-      setNotificationMessage(`You have successfully logged out`);
+      setNotificationMessage("You have successfully logged out");
       setTimeout(() => {
         setStatus(null);
         setNotificationMessage(null);
@@ -115,7 +115,7 @@ const App = () => {
     try {
       if (!title || !author || !url) {
         setStatus("error");
-        setNotificationMessage(`You must fill out all the fields`);
+        setNotificationMessage("You must fill out all the fields");
         setTimeout(() => {
           setStatus(null);
           setNotificationMessage(null);
@@ -138,13 +138,39 @@ const App = () => {
     }
   };
 
+  const handleRemoveBlog = async (blog) => {
+    try {
+      if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+        return;
+      }
+      await blogService.remove(blog.id);
+      setBlogs(blogs.filter((deleteBlog) => deleteBlog.id !== blog.id));
+      setStatus("success");
+      setNotificationMessage(`Blog ${blog.title} deleted successfully`);
+      setTimeout(() => {
+        setStatus(null);
+        setNotificationMessage(null);
+      }, 5000);
+    } catch {
+      setNotificationMessage("Failed to delete blog");
+      setTimeout(() => {
+        setNotificationMessage(null);
+      }, 5000);
+    }
+  };
   const blogsRender = () => {
     const orderedBlogs = [...blogs];
 
     orderedBlogs.sort((a, b) => b.likes - a.likes);
 
     return orderedBlogs.map((blog) => (
-      <Blog key={blog.id} handleLikeBlog={handleLikeBlog} blog={blog} />
+      <Blog
+        key={blog.id}
+        handleLikeBlog={handleLikeBlog}
+        handleRemoveBlog={handleRemoveBlog}
+        blog={blog}
+        user={user}
+      />
     ));
   };
 
