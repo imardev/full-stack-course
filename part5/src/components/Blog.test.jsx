@@ -40,4 +40,17 @@ describe("Blog", () => {
     expect(elementUrl).toBeDefined();
     expect(elementLikes).toBeDefined();
   });
+
+  test("click like button twice and likes will plus two", async () => {
+    const user = userEvent.setup();
+    const mockHandler = vi.fn();
+    const component = render(
+      <Blog blog={blog} user={blog.user} handleLikeBlog={mockHandler} />,
+    );
+    await user.click(screen.getByRole("button", { name: /view/i }));
+    const likeButton = screen.getByText("like");
+    await user.click(likeButton);
+    await user.click(likeButton);
+    expect(mockHandler.mock.calls).toHaveLength(2);
+  });
 });
