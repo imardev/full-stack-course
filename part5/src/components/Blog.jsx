@@ -20,9 +20,10 @@ const Blog = ({ blog, handleLikeBlog, handleRemoveBlog, user }) => {
     <>
       <div style={blogStyle}>
         <div>
-          <p>
-            {blog.title} {blog.author}
-          </p>
+          <div className="info">
+            <p>{blog.title}</p>
+            <p>{blog.author}</p>
+          </div>
           <button onClick={toggleVisible}>{visible ? "hide" : "view"}</button>
         </div>
         <div style={showWhenVisible} className="details">

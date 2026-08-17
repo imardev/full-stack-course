@@ -25,3 +25,8 @@
   bottom: 1rem;
   right: 1.5rem;
 }
+
+.info {
+  display: flex;
+  gap: 1rem;
+}
