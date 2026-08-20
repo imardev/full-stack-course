@@ -39,7 +39,7 @@ const Blog = ({
   };
   return (
     <>
-      <div style={blogStyle}>
+      <div style={blogStyle} className="blog">
         <div>
           <div className="info">
             <p>{blog.title}</p>

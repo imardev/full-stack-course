@@ -30,6 +30,7 @@ export default function BlogForm({ handleSubmit }) {
             type="text"
             placeholder="Enter blog title"
             value={title}
+            id="create-title"
             onChange={({ target }) => setTitle(target.value)}
           />
         </label>
@@ -40,6 +41,7 @@ export default function BlogForm({ handleSubmit }) {
             type="text"
             placeholder="Enter blog name"
             value={author}
+            id="create-author"
             onChange={({ target }) => setAuthor(target.value)}
           />
         </label>
@@ -50,6 +52,7 @@ export default function BlogForm({ handleSubmit }) {
             type="text"
             placeholder="Enter blog url"
             value={url}
+            id="create-url"
             onChange={({ target }) => setUrl(target.value)}
           />
         </label>

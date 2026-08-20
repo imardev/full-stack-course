@@ -114,5 +114,23 @@ test.describe("Blog app", () => {
         page.getByRole("button", { name: "remove" }),
       ).not.toBeVisible();
     });
+    test("blogs are ordered by likes", async ({ page }) => {
+      await createBlog(page, "Blog 1", "author1", "https://blog1.com");
+      await expect(page.getByText("Blog 1", { exact: true })).toBeVisible();
+      await createBlog(page, "Blog 2", "author2", "https://blog2.com");
+      await expect(page.getByText("Blog 2", { exact: true })).toBeVisible();
+
+      const blogs = page.locator(".blog");
+
+      const blog = page.locator(".blog").filter({
+        hasText: "Blog 2",
+      });
+
+      await blog.getByRole("button", { name: "view" }).click();
+      await blog.getByRole("button", { name: "like" }).click();
+
+      await expect(blogs.nth(0)).toContainText("Blog 2");
+      await expect(blogs.nth(1)).toContainText("Blog 1");
+    });
   });
 });
