@@ -6,14 +6,22 @@ test.describe("Blog app", () => {
   test.beforeEach(async ({ page, request }) => {
     await request.post("/api/testing/reset");
 
-    const response = await request.post("/api/users/", {
+    const responseUser1 = await request.post("/api/users/", {
       data: {
         name: "Matti Luukkainen",
         username: "mluukkai",
         password: "salainen",
       },
     });
-    expect(response.ok()).toBeTruthy();
+    const responseUser2 = await request.post("/api/users/", {
+      data: {
+        name: "Testing",
+        username: "test",
+        password: "teste2e",
+      },
+    });
+    expect(responseUser1.ok()).toBeTruthy();
+    expect(responseUser2.ok()).toBeTruthy();
     await page.goto("/");
   });
 
@@ -84,6 +92,26 @@ test.describe("Blog app", () => {
       await page.getByRole("button", { name: "remove" }).click();
       await expect(
         page.getByText("Test from playwright", { exact: true }),
+      ).not.toBeVisible();
+    });
+    test("only the creator can see the delete button", async ({ page }) => {
+      // crear blog
+      await createBlog(
+        page,
+        "Test from playwright",
+        "playwright",
+        "https://playwright.dev",
+      );
+      await page.getByRole("button", { name: "view" }).click();
+      // comprobar boton
+      await expect(page.getByRole("button", { name: "remove" })).toBeVisible();
+      // cerrar sesion
+      await page.getByRole("button", { name: "Log out" }).click();
+      // iniciar sesion con nuevo usuario
+      await loginWith(page, "test", "teste2e");
+      await page.getByRole("button", { name: "view" }).click();
+      await expect(
+        page.getByRole("button", { name: "remove" }),
       ).not.toBeVisible();
     });
   });
