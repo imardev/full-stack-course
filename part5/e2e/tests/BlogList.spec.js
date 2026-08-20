@@ -1,5 +1,6 @@
 // @ts-check
 import { test, expect } from "@playwright/test";
+import { loginWith, createBlog } from "./helper";
 
 test.describe("Blog app", () => {
   test.beforeEach(async ({ page, request }) => {
@@ -25,46 +26,36 @@ test.describe("Blog app", () => {
 
   test.describe("Login", () => {
     test("succeeds with correct credentials", async ({ page }) => {
-      await page.getByLabel("Username").fill("mluukkai");
-      await page.getByLabel("Password").fill("salainen");
-      await page.getByRole("button", { name: "login" }).click();
+      await loginWith(page, "mluukkai", "salainen");
       await expect(page.getByText("mluukkai logged in")).toBeVisible();
     });
 
     test("fails with wrong credentials", async ({ page }) => {
-      await page.getByLabel("Username").fill("wrong");
-      await page.getByLabel("Password").fill("wrong");
-      await page.getByRole("button", { name: "login" }).click();
+      await loginWith(page, "wrong", "wrong");
       await expect(page.getByText("wrong credentials")).toBeVisible();
     });
   });
 
   test.describe("When logged in", () => {
     test.beforeEach(async ({ page }) => {
-      await page.getByLabel("Username").fill("mluukkai");
-      await page.getByLabel("Password").fill("salainen");
-      await page.getByRole("button", { name: "login" }).click();
+      await loginWith(page, "mluukkai", "salainen");
       await expect(page.getByText("mluukkai logged in")).toBeVisible();
     });
 
     test("a new blog can be created", async ({ page }) => {
-      await page.getByRole("button", { name: "Show blog form" }).click();
-      await page.getByLabel("Title:").fill("Test from playwright");
-      await page.getByLabel("Author:").fill("playwright");
-      await page.getByLabel("Url:").fill("https://playwright.dev");
-      await page.getByRole("button", { name: "create" }).click();
-      await expect(
-        page.getByText("Test from playwright", { exact: true }),
-      ).toBeVisible();
+      const title = "Test from playwright";
+      await createBlog(page, title, "playwright", "https://playwright.dev");
+      await expect(page.getByText(title, { exact: true })).toBeVisible();
     });
 
     test("a blog can be edited", async ({ page }) => {
       // crear blog
-      await page.getByRole("button", { name: "Show blog form" }).click();
-      await page.getByLabel("Title:").fill("Test from playwright");
-      await page.getByLabel("Author:").fill("playwright");
-      await page.getByLabel("Url:").fill("https://playwright.dev");
-      await page.getByRole("button", { name: "create" }).click();
+      await createBlog(
+        page,
+        "Test from playwright",
+        "playwright",
+        "https://playwright.dev",
+      );
       // editar blog
       await page.getByRole("button", { name: "view" }).click();
       await page.getByRole("button", { name: "edit" }).click();
@@ -75,6 +66,25 @@ test.describe("Blog app", () => {
       await expect(
         page.getByText("Test from playwright edited", { exact: true }),
       ).toBeVisible();
+    });
+
+    test("a blog can be deleted", async ({ page }) => {
+      // crear blog
+      await createBlog(
+        page,
+        "Test from playwright",
+        "playwright",
+        "https://playwright.dev",
+      );
+      // Eliminar blog
+      page.on("dialog", async (dialog) => {
+        await dialog.accept();
+      });
+      await page.getByRole("button", { name: "view" }).click();
+      await page.getByRole("button", { name: "remove" }).click();
+      await expect(
+        page.getByText("Test from playwright", { exact: true }),
+      ).not.toBeVisible();
     });
   });
 });
