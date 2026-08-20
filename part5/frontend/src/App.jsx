@@ -191,11 +191,7 @@ const App = () => {
           </div>
         </>
       )}
-      {!user && (
-        <Togglable buttonLabel="Show log in">
-          <LoginForm handleSubmit={handleLogin} />
-        </Togglable>
-      )}
+      {!user && <LoginForm handleSubmit={handleLogin} />}
       {user && <BlogForm handleSubmit={handleNewBlog} />}
       <h2>blogs</h2>
 
