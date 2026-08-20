@@ -1,6 +1,5 @@
 // @ts-check
 import { test, expect } from "@playwright/test";
-import { text } from "node:stream/consumers";
 
 test.describe("Blog app", () => {
   test.beforeEach(async ({ page, request }) => {
@@ -37,6 +36,26 @@ test.describe("Blog app", () => {
       await page.getByLabel("Password").fill("wrong");
       await page.getByRole("button", { name: "login" }).click();
       await expect(page.getByText("wrong credentials")).toBeVisible();
+    });
+  });
+
+  test.describe("When logged in", () => {
+    test.beforeEach(async ({ page }) => {
+      await page.getByLabel("Username").fill("mluukkai");
+      await page.getByLabel("Password").fill("salainen");
+      await page.getByRole("button", { name: "login" }).click();
+      await expect(page.getByText("mluukkai logged in")).toBeVisible();
+    });
+
+    test("a new blog can be created", async ({ page }) => {
+      await page.getByRole("button", { name: "Show blog form" }).click();
+      await page.getByLabel("Title:").fill("Test from playwright");
+      await page.getByLabel("Author:").fill("playwright");
+      await page.getByLabel("Url:").fill("https://playwright.dev");
+      await page.getByRole("button", { name: "create" }).click();
+      await expect(
+        page.getByText("Test from playwright", { exact: true }),
+      ).toBeVisible();
     });
   });
 });
