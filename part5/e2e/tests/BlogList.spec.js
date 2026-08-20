@@ -57,5 +57,24 @@ test.describe("Blog app", () => {
         page.getByText("Test from playwright", { exact: true }),
       ).toBeVisible();
     });
+
+    test("a blog can be edited", async ({ page }) => {
+      // crear blog
+      await page.getByRole("button", { name: "Show blog form" }).click();
+      await page.getByLabel("Title:").fill("Test from playwright");
+      await page.getByLabel("Author:").fill("playwright");
+      await page.getByLabel("Url:").fill("https://playwright.dev");
+      await page.getByRole("button", { name: "create" }).click();
+      // editar blog
+      await page.getByRole("button", { name: "view" }).click();
+      await page.getByRole("button", { name: "edit" }).click();
+      await page.locator("#edit-title").fill("Test from playwright edited");
+      await page.locator("#edit-author").fill("playwright edited");
+      await page.locator("#edit-url").fill("https://playwright.dev/edited");
+      await page.getByRole("button", { name: "create" }).click();
+      await expect(
+        page.getByText("Test from playwright edited", { exact: true }),
+      ).toBeVisible();
+    });
   });
 });

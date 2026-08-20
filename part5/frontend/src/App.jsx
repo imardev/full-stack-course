@@ -138,6 +138,40 @@ const App = () => {
     }
   };
 
+  const handleEditBlog = async (blog, newBlog) => {
+    const updatedBlog = {
+      title: newBlog.title,
+      author: newBlog.author,
+      url: newBlog.url,
+      likes: blog.likes,
+      user: blog.user.id,
+    };
+
+    try {
+      const returnedBlog = await blogService.update(blog.id, updatedBlog);
+      setBlogs(
+        blogs.map((blogUpdated) => {
+          if (blogUpdated.id === blog.id) {
+            return returnedBlog;
+          }
+
+          return blogUpdated;
+        }),
+      );
+      setStatus("success");
+      setNotificationMessage(`Blog ${blog.title} updated successfully`);
+      setTimeout(() => {
+        setStatus(null);
+        setNotificationMessage(null);
+      }, 5000);
+    } catch {
+      setNotificationMessage("Failed to update blog");
+      setTimeout(() => {
+        setNotificationMessage(null);
+      }, 5000);
+    }
+  };
+
   const handleRemoveBlog = async (blog) => {
     try {
       if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
@@ -170,6 +204,7 @@ const App = () => {
         handleRemoveBlog={handleRemoveBlog}
         blog={blog}
         user={user}
+        handleEditBlog={handleEditBlog}
       />
     ));
   };
