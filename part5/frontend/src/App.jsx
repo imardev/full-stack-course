@@ -7,12 +7,20 @@ import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+} from "react-router-dom";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [notificationMessage, setNotificationMessage] = useState(null);
   const [status, setStatus] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loggedUserJSON = localStorage.getItem("loggedBlogAppUser");
@@ -33,6 +41,7 @@ const App = () => {
       setStatus("success");
       setNotificationMessage("You have successfully logged in");
       setUser(user);
+      navigate("/");
       setTimeout(() => {
         setStatus(null);
         setNotificationMessage(null);
@@ -57,6 +66,7 @@ const App = () => {
       blogService.setToken(null);
       setStatus("success");
       setNotificationMessage("You have successfully logged out");
+      navigate("/");
       setTimeout(() => {
         setStatus(null);
         setNotificationMessage(null);
@@ -209,29 +219,59 @@ const App = () => {
     ));
   };
 
-  return (
-    <div>
-      <Notification message={notificationMessage} status={status} />
-      {user && (
-        <>
-          <div>
-            <p>
-              <b>{user.username}</b> logged in
-            </p>
-            <Button
-              type="log out"
-              text="Log out"
-              handle={handleLogOut}
-            ></Button>
-          </div>
-        </>
-      )}
-      {!user && <LoginForm handleSubmit={handleLogin} />}
-      {user && <BlogForm handleSubmit={handleNewBlog} />}
-      <h2>blogs</h2>
+  const padding = {
+    padding: 5,
+  };
 
-      {user && blogsRender()}
-    </div>
+  return (
+    <>
+      <nav>
+        <Link to="/" style={padding}>
+          Blogs
+        </Link>
+        {!user && (
+          <Link to="/login" style={padding}>
+            Login
+          </Link>
+        )}
+
+        {user && (
+          <Button type="log out" text="Log out" handle={handleLogOut}></Button>
+        )}
+      </nav>
+      <h2>blogs</h2>
+      {!user && <p>Please log in to view the blogs.</p>}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              {user && (
+                <>
+                  <div>
+                    <p>
+                      <b>{user.username}</b> logged in
+                    </p>
+                  </div>
+                </>
+              )}
+              {user && <BlogForm handleSubmit={handleNewBlog} />}
+              {user && blogsRender()}
+            </>
+          }
+        />
+
+        <Route
+          path="/login"
+          element={
+            <>
+              <LoginForm handleSubmit={handleLogin} />
+            </>
+          }
+        />
+      </Routes>
+      <Notification message={notificationMessage} status={status} />
+    </>
   );
 };
 
