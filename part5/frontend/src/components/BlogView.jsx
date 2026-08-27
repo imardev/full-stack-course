@@ -6,13 +6,16 @@ const BlogView = ({
   handleRemoveBlog,
   handleEditBlog,
   user,
+  status,
 }) => {
   let params = useParams();
   const idBlog = params.blogId;
   const blog = blogs.find((blog) => blog.id === idBlog);
-  console.log(blog);
-  if (!blog) {
+  if (status === true) {
     return "Loading...";
+  }
+  if (status === false && blog === undefined) {
+    return "Blog no encontrado";
   }
 
   return (

@@ -15,16 +15,20 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [notificationMessage, setNotificationMessage] = useState(null);
   const [status, setStatus] = useState(null);
+  const [blogStatus, setBlogStatus] = useState(true);
   const navigate = useNavigate();
-
   useEffect(() => {
     const loggedUserJSON = localStorage.getItem("loggedBlogAppUser");
+
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       blogService.setToken(user.token);
     }
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService.getAll().then((blogs) => {
+      setBlogs(blogs);
+      setBlogStatus(false);
+    });
   }, []);
 
   // Funcion para el inicio de sesion
@@ -186,6 +190,7 @@ const App = () => {
       setBlogs(blogs.filter((deleteBlog) => deleteBlog.id !== blog.id));
       setStatus("success");
       setNotificationMessage(`Blog ${blog.title} deleted successfully`);
+      navigate("/");
       setTimeout(() => {
         setStatus(null);
         setNotificationMessage(null);
@@ -226,6 +231,9 @@ const App = () => {
         <Link to="/" style={padding}>
           Blogs
         </Link>
+        <Link to="/create" style={padding}>
+          Create blog
+        </Link>
         {!user && (
           <Link to="/login" style={padding}>
             Login
@@ -251,7 +259,6 @@ const App = () => {
                   </div>
                 </>
               )}
-              {user && <BlogForm handleSubmit={handleNewBlog} />}
               <h2>blogs</h2>
               {!user && <p>Please log in to view the blogs.</p>}
               {user && <ul>{blogsRender()}</ul>}
@@ -261,25 +268,24 @@ const App = () => {
 
         <Route
           path="/login"
-          element={
-            <>
-              <LoginForm handleSubmit={handleLogin} />
-            </>
-          }
+          element={<LoginForm handleSubmit={handleLogin} />}
         />
         <Route
           path="/blogs/:blogId"
           element={
-            <>
-              <BlogView
-                blogs={blogs}
-                handleLikeBlog={handleLikeBlog}
-                handleRemoveBlog={handleRemoveBlog}
-                handleEditBlog={handleEditBlog}
-                user={user}
-              />
-            </>
+            <BlogView
+              blogs={blogs}
+              handleLikeBlog={handleLikeBlog}
+              handleRemoveBlog={handleRemoveBlog}
+              handleEditBlog={handleEditBlog}
+              user={user}
+              status={blogStatus}
+            />
           }
+        />
+        <Route
+          path="/create"
+          element={<BlogForm handleSubmit={handleNewBlog} />}
         />
       </Routes>
       <Notification message={notificationMessage} status={status} />
