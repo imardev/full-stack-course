@@ -260,8 +260,8 @@ const App = () => {
                 </>
               )}
               <h2>blogs</h2>
-              {!user && <p>Please log in to view the blogs.</p>}
-              {user && <ul>{blogsRender()}</ul>}
+              {/* {!user && <p>Please log in to view the blogs.</p>} */}
+              <ul>{blogsRender()}</ul>
             </>
           }
         />
