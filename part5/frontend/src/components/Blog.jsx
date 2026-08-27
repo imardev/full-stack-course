@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Togglable from "./Togglable";
+import { Link } from "react-router-dom";
 
 const Blog = ({
   blog,
@@ -39,15 +40,17 @@ const Blog = ({
   };
   return (
     <>
-      <div style={blogStyle} className="blog">
+      <div className="blog">
         <div>
-          <div className="info">
-            <p>{blog.title}</p>
-            <p>{blog.author}</p>
-          </div>
-          <button onClick={toggleVisible}>{visible ? "hide" : "view"}</button>
+          <Link to={`/blogs/${blog.id}`}>
+            <p>
+              {blog.title} by {blog.author}
+            </p>
+          </Link>
+
+          {/* <button onClick={toggleVisible}>{visible ? "hide" : "view"}</button> */}
         </div>
-        <div style={showWhenVisible} className="details">
+        {/* <div style={showWhenVisible} className="details">
           <p>{blog.url}</p>
           <div className="likes">
             {blog.likes}{" "}
@@ -101,7 +104,7 @@ const Blog = ({
           {blog.user.username === user.username && (
             <button onClick={() => handleRemoveBlog(blog)}>remove</button>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );

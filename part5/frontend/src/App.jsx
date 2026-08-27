@@ -7,13 +7,8 @@ import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-} from "react-router-dom";
+import BlogView from "./components/BlogView";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -57,7 +52,7 @@ const App = () => {
     }
   };
 
-  const handleLogOut = async () => {
+  const handleLogOut = async (event) => {
     event.preventDefault();
 
     try {
@@ -208,14 +203,16 @@ const App = () => {
     orderedBlogs.sort((a, b) => b.likes - a.likes);
 
     return orderedBlogs.map((blog) => (
-      <Blog
-        key={blog.id}
-        handleLikeBlog={handleLikeBlog}
-        handleRemoveBlog={handleRemoveBlog}
-        blog={blog}
-        user={user}
-        handleEditBlog={handleEditBlog}
-      />
+      <li key={blog.id}>
+        <Blog
+          key={blog.id}
+          handleLikeBlog={handleLikeBlog}
+          handleRemoveBlog={handleRemoveBlog}
+          blog={blog}
+          user={user}
+          handleEditBlog={handleEditBlog}
+        />
+      </li>
     ));
   };
 
@@ -239,8 +236,7 @@ const App = () => {
           <Button type="log out" text="Log out" handle={handleLogOut}></Button>
         )}
       </nav>
-      <h2>blogs</h2>
-      {!user && <p>Please log in to view the blogs.</p>}
+
       <Routes>
         <Route
           path="/"
@@ -256,7 +252,9 @@ const App = () => {
                 </>
               )}
               {user && <BlogForm handleSubmit={handleNewBlog} />}
-              {user && blogsRender()}
+              <h2>blogs</h2>
+              {!user && <p>Please log in to view the blogs.</p>}
+              {user && <ul>{blogsRender()}</ul>}
             </>
           }
         />
@@ -266,6 +264,20 @@ const App = () => {
           element={
             <>
               <LoginForm handleSubmit={handleLogin} />
+            </>
+          }
+        />
+        <Route
+          path="/blogs/:blogId"
+          element={
+            <>
+              <BlogView
+                blogs={blogs}
+                handleLikeBlog={handleLikeBlog}
+                handleRemoveBlog={handleRemoveBlog}
+                handleEditBlog={handleEditBlog}
+                user={user}
+              />
             </>
           }
         />
