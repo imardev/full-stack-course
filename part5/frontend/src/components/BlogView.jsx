@@ -10,21 +10,20 @@ const BlogView = ({
 }) => {
   let params = useParams();
   const idBlog = params.blogId;
-  const blog = blogs.find((blog) => blog.id === idBlog);
+  const blog = blogs.find((blog) => blog.id == idBlog);
   if (status === true) {
     return "Loading...";
   }
   if (status === false && blog === undefined) {
     return "Blog no encontrado";
   }
-
   return (
     <main>
       <h1>{blog.title}</h1>
       <a href={blog.url}>{blog.url}</a>
-      {user && (
-        <div className="likes">
-          {blog.likes}
+      <div className="likes">
+        {blog.likes}
+        {user && (
           <button
             onClick={() => {
               handleLikeBlog(blog);
@@ -32,8 +31,8 @@ const BlogView = ({
           >
             like
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       <p>Added by {blog.user.username}</p>
       {user && blog.user.username === user.username && (
