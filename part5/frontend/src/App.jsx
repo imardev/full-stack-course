@@ -2,13 +2,19 @@ import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-import Button from "./components/Button";
+
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import { Container } from "@mui/material";
 import BlogView from "./components/BlogView";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import Link from "@mui/material/Link";
+import { Link as RouterLink } from "react-router-dom";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { Button, Alert } from "@mui/material";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -227,23 +233,57 @@ const App = () => {
 
   return (
     <Container>
-      <nav>
-        <Link to="/" style={padding}>
-          Blogs
-        </Link>
-        <Link to="/create" style={padding}>
-          Create blog
-        </Link>
-        {!user && (
-          <Link to="/login" style={padding}>
-            Login
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Blog app
+          </Typography>
+          <Link
+            component={RouterLink}
+            to="/"
+            sx={{
+              color: "white",
+              padding: "1rem",
+            }}
+          >
+            Blogs
           </Link>
-        )}
+          <Link
+            component={RouterLink}
+            to="/create"
+            sx={{
+              color: "white",
+              padding: "1rem",
+            }}
+          >
+            Create blog
+          </Link>
+          {!user && (
+            <Link
+              to="/login"
+              component={RouterLink}
+              sx={{
+                color: "white",
+                padding: "1rem",
+              }}
+            >
+              Login
+            </Link>
+          )}
 
-        {user && (
-          <Button type="log out" text="Log out" handle={handleLogOut}></Button>
-        )}
-      </nav>
+          {user && (
+            <Button
+              variant="text"
+              onClick={handleLogOut}
+              sx={{
+                color: "white",
+              }}
+            >
+              Log out
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
 
       <Routes>
         <Route
