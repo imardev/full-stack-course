@@ -6,7 +6,7 @@ import Button from "./components/Button";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
-import Togglable from "./components/Togglable";
+import { Container } from "@mui/material";
 import BlogView from "./components/BlogView";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 
@@ -226,7 +226,7 @@ const App = () => {
   };
 
   return (
-    <>
+    <Container>
       <nav>
         <Link to="/" style={padding}>
           Blogs
@@ -289,7 +289,7 @@ const App = () => {
         />
       </Routes>
       <Notification message={notificationMessage} status={status} />
-    </>
+    </Container>
   );
 };
 
