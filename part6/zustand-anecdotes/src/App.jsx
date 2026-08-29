@@ -2,10 +2,18 @@ import { useAnecdotes, useAnecdoteActions } from "./store";
 
 const App = () => {
   const anecdotes = useAnecdotes();
-  const { addVote } = useAnecdoteActions();
+  const { addVote, addAnecdote } = useAnecdoteActions();
 
+  const getId = () => (100000 * Math.random()).toFixed(0);
   const vote = (id) => {
     addVote(id);
+  };
+
+  const addAnecdoteForm = (e) => {
+    e.preventDefault();
+    const content = e.target.anecdote.value;
+    addAnecdote({ content, id: getId(), votes: 0 });
+    e.target.reset();
   };
 
   return (
@@ -21,11 +29,11 @@ const App = () => {
         </div>
       ))}
       <h2>create new</h2>
-      <form>
+      <form onSubmit={addAnecdoteForm}>
         <div>
-          <input />
+          <input name="anecdote" />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
       </form>
     </div>
   );

@@ -28,6 +28,8 @@ const useAnecdoteStore = create((set) => ({
             : anecdote,
         ),
       })),
+    addAnecdote: (anecdote) =>
+      set((state) => ({ anecdotes: state.anecdotes.concat(anecdote) })),
   },
 }));
 
