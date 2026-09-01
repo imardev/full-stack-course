@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getAll, createNew } from "./AnecdoteService";
+import { getAll, createNew, addVote } from "./AnecdoteService";
 
 // const getId = () => (100000 * Math.random()).toFixed(0);
 
@@ -13,14 +13,21 @@ const useAnecdoteStore = create((set) => ({
   anecdotes: [],
   filter: "",
   actions: {
-    addVote: (id) =>
+    addVote: async (id) => {
+      const anecdote = useAnecdoteStore
+        .getState()
+        .anecdotes.find((n) => n.id === id);
+      const votedAnecdote = await addVote(
+        { ...anecdote, votes: anecdote.votes + 1 },
+        id,
+      );
       set((state) => ({
         anecdotes: state.anecdotes.map((anecdote) =>
-          anecdote.id === id
-            ? { ...anecdote, votes: anecdote.votes + 1 }
-            : anecdote,
+          anecdote.id === id ? votedAnecdote : anecdote,
         ),
-      })),
+      }));
+    },
+
     addAnecdote: async (anecdote) => {
       const newAnecdote = await createNew(anecdote);
       set((state) => ({ anecdotes: state.anecdotes.concat(newAnecdote) }));

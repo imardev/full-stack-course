@@ -28,4 +28,18 @@ const createNew = async (content) => {
   return await response.json();
 };
 
-export { getAll, createNew };
+const addVote = async (content, id) => {
+  const response = await fetch(`${baseUrl}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(content),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create note");
+  }
+
+  return await response.json();
+};
+
+export { getAll, createNew, addVote };
