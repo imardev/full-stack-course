@@ -9,6 +9,17 @@ import { getAll, createNew, addVote } from "./AnecdoteService";
 //   votes: 0,
 // });
 
+// Estado de notificaciones
+const useNotificationStore = create((set) => ({
+  notification: "",
+  actions: {
+    setNotification: (message) => {
+      set(() => ({ notification: message }));
+    },
+  },
+}));
+
+// Estado de anecdotas y filtros
 const useAnecdoteStore = create((set) => ({
   anecdotes: [],
   filter: "",
@@ -21,6 +32,12 @@ const useAnecdoteStore = create((set) => ({
         { ...anecdote, votes: anecdote.votes + 1 },
         id,
       );
+      useNotificationStore
+        .getState()
+        .actions.setNotification(`You voted '${votedAnecdote.content}'`);
+      setTimeout(() => {
+        useNotificationStore.getState().actions.setNotification("");
+      }, 5000);
       set((state) => ({
         anecdotes: state.anecdotes.map((anecdote) =>
           anecdote.id === id ? votedAnecdote : anecdote,
@@ -30,6 +47,12 @@ const useAnecdoteStore = create((set) => ({
 
     addAnecdote: async (anecdote) => {
       const newAnecdote = await createNew(anecdote);
+      useNotificationStore
+        .getState()
+        .actions.setNotification(`You added '${newAnecdote.content}'`);
+      setTimeout(() => {
+        useNotificationStore.getState().actions.setNotification("");
+      }, 5000);
       set((state) => ({ anecdotes: state.anecdotes.concat(newAnecdote) }));
     },
 
@@ -41,6 +64,7 @@ const useAnecdoteStore = create((set) => ({
   },
 }));
 
+// exports de useAnecdoteStore
 export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes);
 export const useFilter = () => useAnecdoteStore((state) => state.filter);
 export const useAnecdoteActions = () =>
@@ -48,3 +72,10 @@ export const useAnecdoteActions = () =>
 export const useFilterAction = () =>
   useAnecdoteStore((state) => state.actions.setFilter);
 export const useInitialize = () => useAnecdoteStore((state) => state.actions);
+
+// exports de useNotificationStorage
+
+export const useNotification = () =>
+  useNotificationStore((state) => state.notification);
+export const useNotificationAction = () =>
+  useNotificationStore((state) => state.actions);
