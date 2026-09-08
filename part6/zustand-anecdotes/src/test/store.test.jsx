@@ -9,11 +9,7 @@ vi.mock("../AnecdoteService", () => ({
 }));
 
 import { getAll, addVote } from "../AnecdoteService";
-import useAnecdoteStore, {
-  useAnecdotes,
-  useAnecdoteActions,
-  useFilter,
-} from "../store";
+import useAnecdoteStore, { useAnecdotes, useAnecdoteActions } from "../store";
 import AnecdoteList from "../components/AnecdoteList";
 
 // cada inicio de cada test resetea el estado y filtro
@@ -43,6 +39,7 @@ describe("anecdote store", () => {
     const { result: anecdotesResult } = renderHook(() => useAnecdotes());
     expect(anecdotesResult.current).toEqual(mockAnecdote);
   });
+
   it("renders anecdotes ordered by votes", async () => {
     // añadimos al estado dos anecdotas nuevos
     useAnecdoteStore.setState({
@@ -66,11 +63,13 @@ describe("anecdote store", () => {
     // Añadimos el resultado esperado del mock en el addVote
     addVote.mockResolvedValue({
       content: "test2",
-      id: "2",
+      id: 2,
       votes: 1,
     });
     // Añadimos el voto al anecdota con id 2
-    await result.current.addVote(2);
+    await act(async () => {
+      await result.current.addVote(2);
+    });
     // render del componente
     const renderListAnecdotes = render(
       <div className="anecdotes">
@@ -84,6 +83,7 @@ describe("anecdote store", () => {
     // esperamos que el primer elemento contenga la palabra test2
     expect(elementos[0].textContent).toContain("test2");
   });
+
   it("renders only anecdotes matching the filter", () => {
     useAnecdoteStore.setState({
       anecdotes: [
@@ -111,5 +111,40 @@ describe("anecdote store", () => {
     );
     // esperamos que solamente se renderize un anecdota
     expect(elementos.length).toBe(1);
+  });
+
+  it("test", async () => {
+    // añadimos al estado dos anecdotas nuevos
+    useAnecdoteStore.setState({
+      anecdotes: [
+        {
+          content: "test1",
+          id: 1,
+          votes: 0,
+        },
+        {
+          content: "test2",
+          id: 2,
+          votes: 0,
+        },
+      ],
+      filter: "",
+    });
+
+    // asignamos a la constante result los actions de los anecdotas
+    const { result } = renderHook(() => useAnecdoteActions());
+    const { result: resultAnecdotes } = renderHook(() => useAnecdotes());
+    // Añadimos el resultado esperado del mock en el addVote
+    addVote.mockResolvedValue({
+      content: "test2",
+      id: 2,
+      votes: 1,
+    });
+    expect(resultAnecdotes.current[1].votes).toBe(0);
+    // Añadimos el voto al anecdota con id 2
+    await act(async () => {
+      await result.current.addVote(2);
+    });
+    expect(resultAnecdotes.current[1].votes).toBe(1);
   });
 });
