@@ -1,6 +1,6 @@
-import { useFilterAction } from "../store";
+import { useAnecdoteActions } from "../store";
 const Filter = () => {
-  const setFilter = useFilterAction();
+  const setFilter = useAnecdoteActions();
   const handleChange = (event) => {
     // the value of the input field is in event.target.value
     const filtro = event.target.value;

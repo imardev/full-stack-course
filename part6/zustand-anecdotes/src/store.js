@@ -1,13 +1,5 @@
 import { create } from "zustand";
-import { getAll, createNew, addVote } from "./AnecdoteService";
-
-// const getId = () => (100000 * Math.random()).toFixed(0);
-
-// const asObject = (anecdote) => ({
-//   content: anecdote,
-//   id: getId(),
-//   votes: 0,
-// });
+import { getAll, createNew, addVote, deleteAnecdote } from "./AnecdoteService";
 
 // Estado de notificaciones
 const useNotificationStore = create((set) => ({
@@ -61,6 +53,33 @@ const useAnecdoteStore = create((set) => ({
       const anecdotes = await getAll();
       set(() => ({ anecdotes }));
     },
+    setDeleteAnecdota: async (id) => {
+      const anecdote = useAnecdoteStore
+        .getState()
+        .anecdotes.find((n) => n.id === id);
+      if (anecdote.votes === 0) {
+        await deleteAnecdote(id);
+        // notificacion
+        useNotificationStore
+          .getState()
+          .actions.setNotification(`You deleted '${anecdote.content}'`);
+        setTimeout(() => {
+          useNotificationStore.getState().actions.setNotification("");
+        }, 5000);
+        set((state) => ({
+          anecdotes: state.anecdotes.filter((anecdote) => anecdote.id !== id),
+        }));
+      } else {
+        useNotificationStore
+          .getState()
+          .actions.setNotification(
+            `You can't delete '${anecdote.content}' because it has votes.`,
+          );
+        setTimeout(() => {
+          useNotificationStore.getState().actions.setNotification("");
+        }, 5000);
+      }
+    },
   },
 }));
 
@@ -69,9 +88,8 @@ export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes);
 export const useFilter = () => useAnecdoteStore((state) => state.filter);
 export const useAnecdoteActions = () =>
   useAnecdoteStore((state) => state.actions);
-export const useFilterAction = () =>
-  useAnecdoteStore((state) => state.actions.setFilter);
 export const useInitialize = () => useAnecdoteStore((state) => state.actions);
+export default useAnecdoteStore;
 
 // exports de useNotificationStorage
 

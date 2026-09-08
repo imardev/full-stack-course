@@ -2,7 +2,7 @@ import { useAnecdotes, useAnecdoteActions, useFilter } from "../store";
 
 const AnecdoteList = () => {
   const anecdotes = useAnecdotes();
-  const { addVote } = useAnecdoteActions();
+  const { addVote, setDeleteAnecdota } = useAnecdoteActions();
   const filtro = useFilter();
 
   const vote = (id) => {
@@ -24,6 +24,9 @@ const AnecdoteList = () => {
           <div>
             has {anecdote.votes}
             <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={() => setDeleteAnecdota(anecdote.id)}>
+              delete
+            </button>
           </div>
         </div>
       ))}

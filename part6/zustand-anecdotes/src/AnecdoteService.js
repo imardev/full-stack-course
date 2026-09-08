@@ -41,5 +41,16 @@ const addVote = async (content, id) => {
 
   return await response.json();
 };
+const deleteAnecdote = async (id) => {
+  const response = await fetch(`${baseUrl}/${id}`, {
+    method: "DELETE",
+  });
 
-export { getAll, createNew, addVote };
+  if (!response.ok) {
+    throw new Error("Failed to DELETE note");
+  }
+
+  return await response.json();
+};
+
+export { getAll, createNew, addVote, deleteAnecdote };
