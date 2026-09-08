@@ -12,6 +12,7 @@ import { getAll, addVote } from "../AnecdoteService";
 import useAnecdoteStore, { useAnecdotes, useAnecdoteActions } from "../store";
 import AnecdoteList from "../components/AnecdoteList";
 
+// cada inicio de cada test resetea el estado y filtro
 beforeEach(() => {
   useAnecdoteStore.setState({ anecdotes: [], filter: "" });
   vi.clearAllMocks();
@@ -26,14 +27,15 @@ describe("anecdote store", () => {
         votes: 1,
       },
     ];
+    // añadimos que el resultado esperado de getAll sea el el anecdota
     getAll.mockResolvedValue(mockAnecdote);
 
     const { result } = renderHook(() => useAnecdoteActions());
-
+    //obtenemos la accion de initialize
     await act(async () => {
       await result.current.initialize();
     });
-
+    // ejecuta el hook de useAnecdotes mediante renderHook y guardamso la propiedad en result renombrandola como anecdotesResult
     const { result: anecdotesResult } = renderHook(() => useAnecdotes());
     expect(anecdotesResult.current).toEqual(mockAnecdote);
   });
