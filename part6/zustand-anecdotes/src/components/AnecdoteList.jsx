@@ -19,7 +19,7 @@ const AnecdoteList = () => {
   return (
     <>
       {ordenatedAnecdotesList.map((anecdote) => (
-        <div key={anecdote.id}>
+        <div key={anecdote.id} className={`anecdote-${anecdote.id}`}>
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
