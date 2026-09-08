@@ -9,7 +9,11 @@ vi.mock("../AnecdoteService", () => ({
 }));
 
 import { getAll, addVote } from "../AnecdoteService";
-import useAnecdoteStore, { useAnecdotes, useAnecdoteActions } from "../store";
+import useAnecdoteStore, {
+  useAnecdotes,
+  useAnecdoteActions,
+  useFilter,
+} from "../store";
 import AnecdoteList from "../components/AnecdoteList";
 
 // cada inicio de cada test resetea el estado y filtro
@@ -79,5 +83,33 @@ describe("anecdote store", () => {
     );
     // esperamos que el primer elemento contenga la palabra test2
     expect(elementos[0].textContent).toContain("test2");
+  });
+  it("renders only anecdotes matching the filter", () => {
+    useAnecdoteStore.setState({
+      anecdotes: [
+        {
+          content: "Prueba numero 1",
+          id: 1,
+          votes: 0,
+        },
+        {
+          content: "test numero 2",
+          id: 2,
+          votes: 0,
+        },
+      ],
+      filter: "Prueba",
+    });
+    const renderListAnecdotes = render(
+      <div className="anecdotes">
+        <AnecdoteList />
+      </div>,
+    );
+    // buscamos todos lo que contega el clasName de anecdote-[algo] ej: anecdote-567
+    const elementos = renderListAnecdotes.container.querySelectorAll(
+      '[class^="anecdote-"]',
+    );
+    // esperamos que solamente se renderize un anecdota
+    expect(elementos.length).toBe(1);
   });
 });
